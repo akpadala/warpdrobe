@@ -33,7 +33,7 @@ export default function AuthView({ onAuthed }: { onAuthed: (token: string, me: M
         </h1>
         <p>Skip the “what do I wear” loop. Outfits planned around your calendar and the weather.</p>
       </div>
-      <form className="card auth-card" onSubmit={submit}>
+      <form className="auth-card" onSubmit={submit}>
         <div className="seg" role="tablist">
           <button type="button" className={mode === "register" ? "on" : ""} onClick={() => setMode("register")}>
             Create account

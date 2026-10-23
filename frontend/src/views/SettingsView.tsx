@@ -47,7 +47,7 @@ export default function SettingsView({ me, onChange, onSignOut }: Props) {
       <h2>Settings</h2>
       {msg && <p className={msg.ok ? "success" : "error"}>{msg.text}</p>}
 
-      <section className="card">
+      <section className="section">
         <h3>Weather location</h3>
         <p className="muted small">{me.location_name ? `Using ${me.location_name}.` : "Not set yet."}</p>
         <form
@@ -67,7 +67,7 @@ export default function SettingsView({ me, onChange, onSignOut }: Props) {
         </button>
       </section>
 
-      <section className="card">
+      <section className="section">
         <h3>Google Calendar</h3>
         <p className="muted small">
           {me.has_calendar ? "Connected. Outfits follow your events." : "Not connected."} Only event titles and times are read.
@@ -105,13 +105,13 @@ export default function SettingsView({ me, onChange, onSignOut }: Props) {
       </section>
 
       {metrics && (
-        <section className="card">
+        <section className="section">
           <h3>Usage (admin)</h3>
           <pre className="metrics">{JSON.stringify(metrics, null, 2)}</pre>
         </section>
       )}
 
-      <section className="card row between">
+      <section className="row between signout">
         <span className="muted small">Signed in as {me.email}</span>
         <button
           className="ghost"

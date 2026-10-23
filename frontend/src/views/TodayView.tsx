@@ -79,7 +79,7 @@ export default function TodayView({ me, onGoSettings, onGoCloset }: Props) {
 
       {plan && (
         <>
-          <section className="card context">
+          <section className="context">
             {plan.weather ? (
               <div className="wx">
                 <div className="temp">{toF(plan.weather.temp_max_c)}°</div>
@@ -125,7 +125,7 @@ export default function TodayView({ me, onGoSettings, onGoCloset }: Props) {
             ))}
 
           {plan.suggestions.length === 0 && (
-            <div className="card empty">
+            <div className="empty">
               <p>Add at least one top and one bottom (or a dress) and your outfits show up here.</p>
               <button className="primary" onClick={onGoCloset}>
                 Add clothes
@@ -136,7 +136,7 @@ export default function TodayView({ me, onGoSettings, onGoCloset }: Props) {
           {plan.suggestions.map((s) => {
             const o = saved[s.rank];
             return (
-              <article key={s.rank} className="card outfit">
+              <article key={s.rank} className="outfit">
                 <header>
                   <h3>{s.rank === 1 ? "Top pick" : `Option ${s.rank}`}</h3>
                   <span className="score" title="Match score">

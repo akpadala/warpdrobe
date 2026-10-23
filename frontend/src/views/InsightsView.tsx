@@ -34,9 +34,12 @@ export default function InsightsView() {
         </div>
       </div>
 
-      <section className="card">
-        <h3>Best next buy</h3>
-        <p className="muted small">The one piece that would unlock the most new outfits with what you already own.</p>
+      <section className="section">
+        <header>
+          <span className="eyebrow">Gap finder</span>
+          <h3>Best next buy</h3>
+          <p className="muted small">The one piece that would unlock the most new outfits with what you already own.</p>
+        </header>
         {data.next_buys.length === 0 && <p className="muted">Add a few more items first.</p>}
         {data.next_buys.map((b) => (
           <div key={b.name} className="buy">
@@ -47,13 +50,16 @@ export default function InsightsView() {
               </b>
               <span className="muted small"> · {FORMALITY[b.formality]}</span>
             </span>
-            <span className="pill f3">+{b.new_outfits} outfits</span>
+            <span className="pill f3 count">+{b.new_outfits} outfits</span>
           </div>
         ))}
       </section>
 
-      <section className="card">
-        <h3>Resell or donate?</h3>
+      <section className="section">
+        <header>
+          <span className="eyebrow">Closet cleanout</span>
+          <h3>Resell or donate?</h3>
+        </header>
         {data.resell.length === 0 ? (
           <p className="muted">Nothing gathering dust. Nice.</p>
         ) : (
@@ -68,9 +74,12 @@ export default function InsightsView() {
         )}
       </section>
 
-      <section className="card">
-        <h3>Cost per wear</h3>
-        <p className="muted small">Price ÷ times worn. Add prices in the closet to see this.</p>
+      <section className="section">
+        <header>
+          <span className="eyebrow">Value</span>
+          <h3>Cost per wear</h3>
+          <p className="muted small">Price ÷ times worn. Add prices in the closet to see this.</p>
+        </header>
         <table className="cpw">
           <thead>
             <tr>

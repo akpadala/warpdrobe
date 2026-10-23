@@ -91,7 +91,7 @@ export default function ClosetView() {
       {error && <p className="error">{error}</p>}
       {!items && !error && <div className="skeleton" />}
       {items && items.length === 0 && (
-        <div className="card empty">
+        <div className="empty">
           <p>Your closet is empty. Start with 5–10 things you wear a lot: a few tops, bottoms, and shoes.</p>
         </div>
       )}
