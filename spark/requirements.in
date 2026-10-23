@@ -1,0 +1,4 @@
+# PySpark job dependencies (runs on your laptop next to the Kaggle files).
+#   pip-compile --strip-extras --output-file=requirements.txt requirements.in
+pyspark>=4.0
+pytest>=8.3

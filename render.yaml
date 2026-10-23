@@ -1,0 +1,16 @@
+# Render Blueprint: New > Blueprint, pick this repo, then fill in the two secrets.
+services:
+  - type: web
+    name: warpdrobe
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL     # Postgres connection string (e.g. from Neon)
+        sync: false
+      - key: GEMINI_API_KEY   # from aistudio.google.com/apikey
+        sync: false
+      - key: ADMIN_EMAILS     # your login email, unlocks the usage metrics card
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash

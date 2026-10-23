@@ -1,0 +1,31 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/*.db
+
+# Node
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Data (download from Kaggle; never commit)
+*.csv
+spark/sample-data/
+spark-warehouse/
+metastore_db/
+derby.log
+data/holdout_baskets.json
+
+# Eval outputs that contain personal photos' filenames
+predictions.csv
+
+# Personal planning notes
+claude/
+.DS_Store
