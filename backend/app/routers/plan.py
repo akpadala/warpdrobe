@@ -39,7 +39,7 @@ def day_context(user: User, day: date) -> tuple[engine.Context, dict | None, lis
             else:
                 warnings.append("No forecast that far out yet.")
         except Exception as exc:
-            log.warning("weather failed: %s", exc)
+            log.warning("weather failed for (%s, %s): %r", user.latitude, user.longitude, exc)
             warnings.append("Weather is unavailable right now.")
     else:
         warnings.append("Add your city in Settings to plan around the weather.")
@@ -53,7 +53,7 @@ def day_context(user: User, day: date) -> tuple[engine.Context, dict | None, lis
                 top = max(evs, key=lambda e: e.formality)
                 ctx.target_formality, ctx.occasion = top.formality, top.title
         except Exception as exc:
-            log.warning("calendar failed: %s", exc)
+            log.warning("calendar failed: %r", exc)
             warnings.append("Couldn't read your calendar right now.")
     else:
         warnings.append("Connect your calendar in Settings to dress for your events.")

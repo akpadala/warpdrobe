@@ -92,6 +92,18 @@ def test_forecast_parse_and_cache():
     assert round(d.feels_c, 1) == 4.4
 
 
+def test_forecast_skips_days_with_missing_values():
+    payload = {"daily": {
+        "time": ["2026-10-27", "2026-10-28", "2026-10-29"],
+        "temperature_2m_max": [21.0, 18.0, None], "temperature_2m_min": [11.0, None, None],
+        "precipitation_probability_max": [None, 40, None], "weather_code": [None, 3, None],
+    }}
+    days = weather.parse_forecast(payload)
+    assert list(days) == [date(2026, 10, 27)]
+    assert days[date(2026, 10, 27)].precip_chance == 0
+    assert days[date(2026, 10, 27)].summary == "mixed"
+
+
 def test_geocode():
     payload = {"results": [{"name": "Chapel Hill", "admin1": "North Carolina", "country_code": "US",
                             "latitude": 35.91, "longitude": -79.05}]}

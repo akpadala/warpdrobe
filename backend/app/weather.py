@@ -42,16 +42,25 @@ class DayWeather:
 
 def parse_forecast(payload: dict) -> dict[date, DayWeather]:
     daily = payload["daily"]
+    n = len(daily["time"])
+
+    def col(name: str) -> list:
+        return daily.get(name) or [None] * n
+
     out = {}
     for i, day in enumerate(daily["time"]):
+        hi, lo = col("temperature_2m_max")[i], col("temperature_2m_min")[i]
+        if hi is None or lo is None:
+            # The far end of the forecast window is sometimes empty; skip it rather than fail.
+            continue
         d = date.fromisoformat(day)
-        precip = (daily.get("precipitation_probability_max") or [None] * len(daily["time"]))[i]
+        code = col("weather_code")[i]
         out[d] = DayWeather(
             date=d,
-            temp_max_c=float(daily["temperature_2m_max"][i]),
-            temp_min_c=float(daily["temperature_2m_min"][i]),
-            precip_chance=int(precip or 0),
-            summary=_CODES.get(int(daily["weather_code"][i]), "mixed"),
+            temp_max_c=float(hi),
+            temp_min_c=float(lo),
+            precip_chance=int(col("precipitation_probability_max")[i] or 0),
+            summary=_CODES.get(int(code), "mixed") if code is not None else "mixed",
         )
     return out
 
@@ -62,7 +71,7 @@ def forecast(lat: float, lon: float, client: httpx.Client | None = None) -> dict
     if hit and time.time() - hit[0] < _TTL:
         return hit[1]
     params = {
-        "latitude": lat, "longitude": lon, "timezone": "auto", "forecast_days": 16,
+        "latitude": lat, "longitude": lon, "timezone": "auto", "forecast_days": 8,
         "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code",
     }
     own = client is None
