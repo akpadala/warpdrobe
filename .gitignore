@@ -21,7 +21,6 @@ spark/sample-data/
 spark-warehouse/
 metastore_db/
 derby.log
-data/holdout_baskets.json
 
 # Eval outputs that contain personal photos' filenames
 predictions.csv
