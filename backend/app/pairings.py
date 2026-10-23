@@ -6,6 +6,7 @@ learned table we fall back to simple color rules.
 """
 
 import json
+import math
 from functools import lru_cache
 from pathlib import Path
 
@@ -66,16 +67,22 @@ class PairingModel:
         return 0.4
 
     def score(self, cat1: str, col1: str, cat2: str, col2: str) -> float:
-        """0..1, where 0.5 means 'no better than chance'."""
-        rule = self.rule_score(col1, col2)
+        """0..1, where 0.5 means 'no better than chance'.
+
+        Learned lift wins when available; on held-out H&M baskets, mixing in the color rules made
+        ranking worse (eval/outfit_eval.py). Rules only cover pairs the data never saw.
+        """
         lift = self.pairs.get(pair_key(token(cat1, col1), token(cat2, col2)))
-        if lift is None:
-            lift = self.color_pairs.get(pair_key(col1, col2))
-            if lift is None:
-                return rule
-            # Color-only evidence is weaker: blend with the rules.
-            return 0.5 * (lift / (1 + lift)) + 0.5 * rule
-        return 0.7 * (lift / (1 + lift)) + 0.3 * rule
+        if lift is not None:
+            return _squash(0.5 + 0.15 * math.log(lift))
+        lift = self.color_pairs.get(pair_key(col1, col2))
+        if lift is not None:
+            return _squash(0.5 + 0.10 * math.log(lift))
+        return self.rule_score(col1, col2)
+
+
+def _squash(x: float) -> float:
+    return min(1.0, max(0.0, x))
 
 
 @lru_cache

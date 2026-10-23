@@ -65,13 +65,25 @@ def evaluate(baskets: list[list[str]], models: dict[str, PairingModel], seed: in
     return out
 
 
+def split(baskets: list[list[str]], part: str) -> list[list[str]]:
+    """Fixed 50/50 split: tune scoring choices on 'dev', report the untouched 'test' half."""
+    if part == "all":
+        return baskets
+    idx = list(range(len(baskets)))
+    random.Random(1).shuffle(idx)
+    half = len(idx) // 2
+    chosen = idx[:half] if part == "dev" else idx[half:]
+    return [baskets[i] for i in chosen]
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--pairings", type=Path, default=Path("data/pairings.json"))
     p.add_argument("--holdout", type=Path, default=Path("data/holdout_baskets.json"))
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--part", choices=["test", "dev", "all"], default="test")
     args = p.parse_args()
-    baskets = json.loads(args.holdout.read_text())["baskets"]
+    baskets = split(json.loads(args.holdout.read_text())["baskets"], args.part)
     res = evaluate(baskets, {"learned_auc": PairingModel.load(args.pairings), "rules_only_auc": PairingModel()},
                    args.seed)
     print(json.dumps(res, indent=2))

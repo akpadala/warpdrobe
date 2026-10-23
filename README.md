@@ -29,7 +29,7 @@ when it's cold, a coat. Each outfit gets four scores:
 | Component | Weight | What it measures |
 |---|---|---|
 | Formality | 0.35 | Distance from the day's dress code (the most formal event wins). Underdressing is penalized more than overdressing |
-| Pairing | 0.30 | How well each pair of pieces goes together. Uses learned H&M lift where available, else color rules |
+| Pairing | 0.30 | How well each pair of pieces goes together: log-lift learned from H&M baskets, with color rules for pairs the data never saw |
 | Weather | 0.25 | Warmth vs. the forecast's "feels like" temperature, season fit, and a missing-coat penalty |
 | Freshness | 0.10 | Avoids pieces worn in the last few days |
 
@@ -51,11 +51,24 @@ dataset: about 31.8M transactions and about 105k articles.
    fewer than 50 baskets are dropped.
 4. Write `data/pairings.json`, which the API loads at startup.
 
+### Results so far
+
+| | |
+|---|---|
+| H&M data processed | ~31.8M transactions, 105k articles → 2,991,233 multi-category baskets (training period, before 2020-08-22) |
+| Learned pairs | 2,838 category+color pairs with ≥50 supporting baskets |
+| Spark runtime | 95 s on a laptop (local mode, Windows) |
+| Outfit compatibility, held-out month | **AUC 0.587** with learned pairings vs. 0.493 with color rules (≈9.8k test baskets, mean of 3 seeds) |
+
+The compatibility test uses the last month of H&M baskets, which the model never trained on. The
+scoring choices (log-lift, with color rules only as a fallback) were picked on a separate dev half
+of those baskets.
+
 ### Evaluation
 
 | What | How | Script |
 |---|---|---|
-| Outfit compatibility | Train on purchases before a cutoff date. Then, for held-out later baskets, check whether the scorer ranks each real basket above a fake one (the same categories with randomly swapped pieces). Report paired AUC for learned pairings vs. color rules | `eval/outfit_eval.py` |
+| Outfit compatibility | Train on purchases before a cutoff date. Then, for held-out later baskets, check whether the scorer ranks each real basket above a fake one (the same categories with randomly swapped pieces). Report paired AUC for learned pairings vs. color rules on a fixed test half (`--part test`) | `eval/outfit_eval.py` |
 | Tagging accuracy (offline) | Gemini predictions vs. hand labels on a photo set: accuracy for category, color and formality (exact and ±1) | `eval/tagging_eval.py` |
 | Tagging accuracy (in app) | Every upload keeps the model's original tags. When users confirm or fix them, the admin metrics compare the two | `/api/admin/metrics` |
 | User satisfaction | 1–5 star ratings on suggestions. The top pick is tracked separately | `/api/admin/metrics` |
